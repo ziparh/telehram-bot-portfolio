@@ -1,8 +1,8 @@
 from telebot import TeleBot, types
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 
-import config
-from db import DB_Manager
+from core.db import db_manager
+from core import config
 
 bot = TeleBot(config.BOT_TOKEN)
 hideBoard = types.ReplyKeyboardRemove()
@@ -56,34 +56,29 @@ Skills: {skills}
 
 @bot.message_handler(commands=['start'])
 def start_command(message):
-    bot.send_message(message.chat.id, """Вот команды которые могут тебе помочь:
-/new_project - используй для добавления нового проекта
-/skills - добавить скилл к проекту
-/projects - проекты
-/delete - удалить проект
-/update_projects - изменить проект
-/info - команды
-Также ты можешь ввести имя проекта и узнать информацию о нем! 
+    bot.send_message(message.chat.id, f"""Привет {message.from_user.first_name}!
 """)
     info(message)
 
 
 @bot.message_handler(commands=['info'])
 def info(message):
-    bot.send_message(message.chat.id,
-                     """
-                     Вот команды которые могут тебе помочь:
-                     
-                     /new_project - используй для добавления нового проекта
-                     ....
-                     
-                     Также ты можешь ввести имя проекта и узнать информацию о нем!""")
+    bot.send_message(message.chat.id, """Вот команды которые могут тебе помочь:
+    /new_project - используй для добавления нового проекта
+    /skills - добавить скилл к проекту
+    /projects - проекты
+    /delete - удалить проект
+    /update_projects - изменить проект
+    /info - команды
+    Также ты можешь ввести имя проекта и узнать информацию о нем! 
+    """)
 
 
 @bot.message_handler(commands=['new_project'])
 def addtask_command(message):
     bot.send_message(message.chat.id, "Введите название проекта:")
     bot.register_next_step_handler(message, description_project)
+
 
 def description_project(message):
     name = message.text
@@ -98,6 +93,7 @@ def name_project(message, data):
     data.append(description)
     bot.send_message(message.chat.id, "Введите ссылку на проект")
     bot.register_next_step_handler(message, link_project, data=data)
+
 
 def link_project(message, data):
     data.append(message.text)
@@ -294,5 +290,4 @@ def text_handler(message):
 
 
 if __name__ == '__main__':
-    db_manager = DB_Manager(config.DATABASE_URL)
     bot.infinity_polling()

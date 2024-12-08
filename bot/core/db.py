@@ -1,5 +1,6 @@
 import sqlite3
-from config import DATABASE_URL
+
+from . import config
 
 skills = [ (_,) for _ in (['Python', 'SQL', 'API', 'Telegram'])]
 statuses = [ (_,) for _ in (['На этапе проектирования', 'В процессе разработки', 'Разработан. Готов к использованию.', 'Обновлен', 'Завершен. Не поддерживается'])]
@@ -129,8 +130,11 @@ class DB_Manager:
 WHERE skill_id = ? AND project_id = ? """
         self.__executemany(sql, [(skill_id, project_id)])
 
+
+db_manager = DB_Manager(config.DATABASE_URL)
+
 if __name__ == '__main__':
-    manager = DB_Manager(DATABASE_URL)
+    manager = DB_Manager(config.DATABASE_URL)
     manager.create_tables()
     manager.default_insert()
     manager.insert_project([(1, 'bot', '.com', 2)])
