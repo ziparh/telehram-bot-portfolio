@@ -35,11 +35,17 @@ def gen_markup(rows):
     return markup
 
 
+@bot.message_handler(commands=['start'])
+def start_command(message):
+    bot.send_message(message.chat.id, f"""Привет {message.from_user.first_name}!
+""")
+    info(message)
+
+
 attributes_of_projects = {'Имя проекта': ["Введите новое имя проекта", "project_name"],
                           "Описание": ["Введите новое описание проекта", "description"],
                           "Ссылка": ["Введите новую ссылку на проект", "url"],
                           "Статус": ["Выберите новый статус задачи", "status_id"]}
-
 
 def info_project(message, user_id, project_name):
     info = db_manager.get_project_info(user_id, project_name)[0]
@@ -52,13 +58,6 @@ Link: {info[2]}
 Status: {info[3]}
 Skills: {skills}
 """)
-
-
-@bot.message_handler(commands=['start'])
-def start_command(message):
-    bot.send_message(message.chat.id, f"""Привет {message.from_user.first_name}!
-""")
-    info(message)
 
 
 @bot.message_handler(commands=['info'])
@@ -288,6 +287,14 @@ def text_handler(message):
     bot.reply_to(message, "Тебе нужна помощь?")
     info(message)
 
+def on_startup():
+    db_manager.create_tables()
+    print('Bot started!')
+
+def main():
+    on_startup()
+    bot.infinity_polling()
+
 
 if __name__ == '__main__':
-    bot.infinity_polling()
+    main()
