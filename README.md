@@ -1,6 +1,6 @@
-## This is a portfolio telegram bot
+# This is a portfolio telegram bot
 
-  ### Here are the commands that the bot has:
+  ## Here are the commands that the bot has:
    ### /new_project - use to add a new project
    ### /skills - add a skill to the project
    ### /projects - projects
